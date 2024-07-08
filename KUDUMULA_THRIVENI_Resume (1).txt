@@ -1,0 +1,91 @@
+Creating a notes sharing web application using Django framework involves several steps. Below is a basic outline of how you can proceed:
+
+Setup Django Project: Start by creating a Django project using the django-admin command-line tool.
+bash
+
+django-admin startproject notes_sharing_app
+Create Django App: Inside your project, create a Django app that will handle notes functionality.
+bash
+Copy code
+cd notes_sharing_app
+django-admin startapp notes
+Define Models: Define Django models for your notes app. These models will represent the structure of your notes.
+python
+
+# notes/models.py
+
+from django.db import models
+
+class Note(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+Create Views: Define views to handle HTTP requests and render templates.
+python
+Copy code
+# notes/views.py
+
+from django.shortcuts import render
+from .models import Note
+
+def note_list(request):
+    notes = Note.objects.all()
+    return render(request, 'notes/note_list.html', {'notes': notes})
+Create Templates: Create HTML templates to render the UI.
+html
+Copy code
+<!-- notes/templates/notes/note_list.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Notes List</title>
+</head>
+<body>
+    <h1>Notes List</h1>
+    <ul>
+        {% for note in notes %}
+            <li>{{ note.title }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+URL Routing: Define URL patterns to map views to URLs.
+python
+Copy code
+# notes_sharing_app/urls.py
+
+from django.urls import path
+from notes.views import note_list
+
+urlpatterns = [
+    path('notes/', note_list, name='note_list'),
+]
+Configure Templates and Static Files: Configure settings to tell Django where to find templates and static files.
+python
+Copy code
+# notes_sharing_app/settings.py
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+    },
+]
+
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
+Run Migrations: Run Django migrations to create database tables for your models.
+bash
+Copy code
+python manage.py makemigrations
+python manage.py migrate
+Run Development Server: Start the Django development server and visit your web application in the browser.
+bash
+Copy code
+python manage.py runserver
